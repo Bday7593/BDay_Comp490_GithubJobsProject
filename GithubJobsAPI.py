@@ -29,9 +29,9 @@ while full_page == 1:
     # print("ITEMS_ON_PAGE = " + str(items_on_page))
     if items_on_page == 0:
         items_on_page = 50
-
+        # increment the page #
         page = page + 1
-        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # the URL for Github Jobs
+        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs
         raw_data = requests.get(url1)  # requesting the URL and saving it as a data type
         raw_data.json()  # changing the URL data type to the json data.
     else:
