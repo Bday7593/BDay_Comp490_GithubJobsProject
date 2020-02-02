@@ -1,6 +1,6 @@
 # Brian Day
 # Comp 490 - Development Seminar
-
+import json
 import requests
 
 
@@ -30,7 +30,7 @@ def github_jobs_search():
     page = 1  # the page the url search is on.
     is_page_full = 1
     while is_page_full == 1:
-        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs
+        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs.txt
         raw_data = data_retrieval(url1)
         print("PAGE = " + str(page))
         store_data(raw_data)
@@ -40,11 +40,23 @@ def github_jobs_search():
             page = page + 1
 
 
+def write_jobs_to_file(basic_list):
+    print("WITHIN write_jobs_to_file()")
+    with open('Github Jobs.txt', 'w') as output:
+        json.dump(basic_list, output)
+        # for item in basic_list:
+        # json.dump(item, output)
+        # output.write(json.dump(item, output))
+        # output.write(json.dumps(basic_list))
+        print("WITHIN write_jobs_to_file() TRYING TO WRITE TO FILE")
+
+
 jobs_list = []  # defining a list to store the items from the json dictionary.
 github_jobs_search()
+write_jobs_to_file(jobs_list)
 
 counts = 0
 for job in jobs_list:
-    print(job['company'])
+    # print(job['company'])
     counts = counts + 1
 print(str(counts))
