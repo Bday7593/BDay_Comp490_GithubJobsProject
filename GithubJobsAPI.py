@@ -1,45 +1,50 @@
 # Brian Day
 # Comp 490 - Development Seminar
 
-import json
 import requests
-from urllib.request import urlopen
 
-page = 1    # the page the url search is on.
-jobs_list = []        # defining a list to store the items from the json dictionary.
-url1 = 'https://jobs.github.com/positions.json?page=' + str(page)   # the URL for Github Jobs
-
-
-raw_data = requests.get(url1)   # requesting the URL and saving it as a data type
-raw_data.json()     # changing the URL data type to the json data.
-
-count = 0   # this is the count of items on in the dictionary
-items_on_page = 50  # this is how many items should be in each dictionary. decrement by 1.
-full_page = 1
 
 # going through each json page.
-while full_page == 1:
-    # going through each dictionary item on the json page.
-    for item in raw_data.json():
-        count = count + 1
-        items_on_page = items_on_page - 1
+def data_retrieval(url):
+    raw_datum = requests.get(url)  # requesting the URL and saving it as a data type
+    return raw_datum
 
+
+def store_data(data):
+    data_counter = 0
+    for item in data.json():  # going through each dictionary item on the json page.
+        data_counter = data_counter + 1
         # Append the item from the dictionary onto the jobs_list
         jobs_list.append(item)
-    # print("ITEMS_ON_PAGE = " + str(items_on_page))
-    if items_on_page == 0:
-        items_on_page = 50
-        # increment the page #
-        page = page + 1
-        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs
-        raw_data = requests.get(url1)  # requesting the URL and saving it as a data type
-        raw_data.json()  # changing the URL data type to the json data.
-    else:
-        full_page = 0
-        print("FULL_PAGE = 0")
 
-counter = 0
+
+def page_is_full(items_on_the_page):
+    if items_on_the_page == 50:
+        print("PAGE NOT FULL = 0")
+        return 1
+    else:
+        return 0
+
+
+def github_jobs_search():
+    page = 1  # the page the url search is on.
+    is_page_full = 1
+    while is_page_full == 1:
+        url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs
+        raw_data = data_retrieval(url1)
+        print("PAGE = " + str(page))
+        store_data(raw_data)
+        if len(jobs_list) % 50 != 0:
+            break
+        else:
+            page = page + 1
+
+
+jobs_list = []  # defining a list to store the items from the json dictionary.
+github_jobs_search()
+
+counts = 0
 for job in jobs_list:
     print(job['company'])
-    counter = counter + 1
-print(str(counter))
+    counts = counts + 1
+print(str(counts))
