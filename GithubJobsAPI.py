@@ -41,7 +41,7 @@ write_jobs_to_file(jobs_list)
 counts = 0
 for job in jobs_list:
     print(job['company'])
-    # print(job['location'])
-    # print()
+    print(job['location'])
+    print()
     counts = counts + 1
-print(str(counts))
+print(str(counts) + " jobs available.")

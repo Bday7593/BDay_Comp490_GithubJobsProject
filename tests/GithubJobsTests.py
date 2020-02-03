@@ -19,12 +19,13 @@ def test_write_jobs_to_file():  # F. Hoffmann-La Roche AG
                 assert item['company'] == 'F. Hoffmann-La Roche AG', "There was no matching job title"
 
 
-def test_sum():
-    assert sum([1, 2, 3]) == 6, "Should be 6"
+# for reference purposes
+# def test_sum():
+    # assert sum([1, 2, 3]) == 6, "Should be 6"
 
 
 if __name__ == "__main__":
-    test_sum()
+    # test_sum() # for reference purposes
     test_store_data()
     test_write_jobs_to_file()
-    print("Everything passed")
+    print("All tests have passed!")
