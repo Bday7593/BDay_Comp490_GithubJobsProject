@@ -34,6 +34,7 @@ def write_jobs_to_file(basic_list):
         json.dump(basic_list, output)  # write the list of dictionaries to the file
 
 
+# in future projects - but sure to have all code in functions rather than 'loose' like below
 jobs_list = []  # defining a list to store the items from the json dictionary.
 github_jobs_search()
 write_jobs_to_file(jobs_list)
