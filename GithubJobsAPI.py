@@ -5,23 +5,26 @@ import json
 import requests
 
 
-def store_data(data):
-    data_counter = 0
+def store_data(data, my_list):
+    # data_counter = 0
     for item in data.json():  # going through each dictionary item on the json page.
-        data_counter = data_counter + 1
+        # data_counter = data_counter + 1
         # Append the item from the dictionary onto the jobs_list
-        jobs_list.append(item)
+        # jobs_list.append(item)
+        my_list.append(item)
 
 
-def github_jobs_search():
+def github_jobs_search(my_list):
     page = 1  # the page the url search is on.
     is_page_full = 1
     while is_page_full == 1:
         url1 = 'https://jobs.github.com/positions.json?page=' + str(page)  # re-assign URL for Github Jobs.txt
         raw_data = requests.get(url1)  # requesting the URL and saving it as a data type
         print("PAGE = " + str(page))
-        store_data(raw_data)
-        if len(jobs_list) % 50 != 0:
+        store_data(raw_data, my_list)
+        # if len(jobs_list) % 50 != 0:
+        if len(my_list) % 50 != 0:
+
             break
         else:
             page = page + 1
@@ -34,14 +37,19 @@ def write_jobs_to_file(basic_list):
         json.dump(basic_list, output)  # write the list of dictionaries to the file
 
 
-jobs_list = []  # defining a list to store the items from the json dictionary.
-github_jobs_search()
-write_jobs_to_file(jobs_list)
+# jobs_list = []  # defining a list to store the items from the json dictionary.
+# github_jobs_search(jobs_list)
+# write_jobs_to_file(jobs_list)
 
-counts = 0
-for job in jobs_list:
-    print(job['company'])
-    print(job['location'])
-    print()
-    counts = counts + 1
-print(str(counts) + " jobs available.")
+# counts = 0
+# for job in jobs_list:
+# print(job['id'])
+# print(job['type'])
+# print(job['company_url'])
+# print(job['company'])
+# print(job['location'])
+# print(job['title'])
+# print(job['description'])
+# print()
+# counts = counts + 1
+# print(str(counts) + " jobs available.")
