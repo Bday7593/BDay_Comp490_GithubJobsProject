@@ -2,8 +2,6 @@
 # Comp 490 - Development Seminar
 import json
 
-import GithubJobsAPI
-
 
 # one test should the method that retrieves the data from the web and assure that you get more than 100 data items
 def test_store_data(my_list):
@@ -34,4 +32,5 @@ if __name__ == "__main__":
     # test_store_data()
     # test_write_jobs_to_file()
     # print("All tests have passed!")
-    main()
+    the_list = []
+    main(the_list)
