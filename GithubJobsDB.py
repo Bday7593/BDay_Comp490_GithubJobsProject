@@ -51,8 +51,8 @@ def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_
     # VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}',
     # '{list_title}', '{list_description}')''')
     cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title)
-            VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}', 
-                    '{list_title}')''')  # , '{list_description}')''')
+            VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}', '{list_title}')''')
+    # , '{list_description}')''')
     # VALUES ({item['id']}, {item['company_url']}, {item['company']}, {item['location']}, {item['title']},
     # {item['description']})''')
 
