@@ -5,7 +5,6 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
-from tests import GithubJobsTests
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
