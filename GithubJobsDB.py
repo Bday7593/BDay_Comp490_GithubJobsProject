@@ -2,9 +2,9 @@
 # Comp 490 - Development Seminar
 
 import sqlite3
-import GithubJobsAPI
-from tests import GithubJobsTests
 from typing import Tuple
+
+import GithubJobsAPI
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
