@@ -41,8 +41,15 @@ def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_
     # , '{list_description}')''')
 
 
+def get_github_jobs_data():
+    return jobs_list
+
+
+jobs_list = []
+
+
 def main():
-    jobs_list = []
+    # jobs_list = []
     GithubJobsAPI.github_jobs_search(jobs_list)  # run the job search to store the job data into the list.
 
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
@@ -55,7 +62,7 @@ def main():
     # print(type(conn))
     close_db(conn)
 
-    GithubJobsTests.main(jobs_list)
+    # GithubJobsTests.main(jobs_list)
 
 
 if __name__ == '__main__':
