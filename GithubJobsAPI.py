@@ -1,16 +1,12 @@
 # Brian Day
 # Comp 490 - Development Seminar
-import json
 
+import json
 import requests
 
 
 def store_data(data, my_list):
-    # data_counter = 0
     for item in data.json():  # going through each dictionary item on the json page.
-        # data_counter = data_counter + 1
-        # Append the item from the dictionary onto the jobs_list
-        # jobs_list.append(item)
         my_list.append(item)
 
 
@@ -22,9 +18,7 @@ def github_jobs_search(my_list):
         raw_data = requests.get(url1)  # requesting the URL and saving it as a data type
         print("PAGE = " + str(page))
         store_data(raw_data, my_list)
-        # if len(jobs_list) % 50 != 0:
         if len(my_list) % 50 != 0:
-
             break
         else:
             page = page + 1
@@ -38,8 +32,6 @@ def write_jobs_to_file(basic_list):
 
 
 # jobs_list = []  # defining a list to store the items from the json dictionary.
-# github_jobs_search(jobs_list)
-# write_jobs_to_file(jobs_list)
 
 # counts = 0
 # for job in jobs_list:
