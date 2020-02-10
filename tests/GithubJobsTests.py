@@ -28,20 +28,10 @@ def test_write_jobs_to_file():  # F. Hoffmann-La Roche AG
     assert data_found
 
 
-# for reference purposes
-# def test_sum():
-# assert sum([1, 2, 3]) == 6, "Should be 6"
 def main(my_list):
-    # test_sum() # for reference purposes
     test_store_data(my_list)
     # test_write_jobs_to_file()
     print("All tests have passed!")
 
-
-if __name__ == "__main__":
-    # test_sum() # for reference purposes
-    # test_store_data()
-    # test_write_jobs_to_file()
-    # print("All tests have passed!")
-    the_list = []
-    main(the_list)
+# if __name__ == "__main__":
+#  main()
