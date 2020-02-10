@@ -29,19 +29,3 @@ def write_jobs_to_file(basic_list):
     print("WITHIN write_jobs_to_file()")
     with open('Github Jobs.txt', 'w') as output:  # open the file and close it when actions are done.
         json.dump(basic_list, output)  # write the list of dictionaries to the file
-
-
-# jobs_list = []  # defining a list to store the items from the json dictionary.
-
-# counts = 0
-# for job in jobs_list:
-# print(job['id'])
-# print(job['type'])
-# print(job['company_url'])
-# print(job['company'])
-# print(job['location'])
-# print(job['title'])
-# print(job['description'])
-# print()
-# counts = counts + 1
-# print(str(counts) + " jobs available.")

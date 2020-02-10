@@ -5,6 +5,7 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
+from tests import GithubJobsTests
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -61,8 +62,7 @@ def main():
         # item['description'])
     # print(type(conn))
     close_db(conn)
-
-    # GithubJobsTests.main(jobs_list)
+    GithubJobsTests.test_stored_data()
 
 
 if __name__ == '__main__':
