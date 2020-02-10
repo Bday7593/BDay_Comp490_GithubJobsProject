@@ -31,8 +31,8 @@ def setup_db(cursor: sqlite3.Cursor):
 
 
 # VALUES ("Brian", "Brian", "Brian", "Brian", "Brian", "Brian")''')
-def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_company, list_location, list_title,
-                        list_description):  # my_list):
+def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_company, list_location, list_title):
+    # list_description):  # my_list):
     # print(str(len(my_list)) + " jobs available.")
     # for item in my_list:  # cycle though the list
     # list_id = str(item['id'])
@@ -48,11 +48,11 @@ def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_
     # print(list_title)
     # print(list_description)
     # print(f'''INSERT INTO JOBS (id, company_url, company, location, title, description)
-            # VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}',
-                    # '{list_title}', '{list_description}')''')
+    # VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}',
+    # '{list_title}', '{list_description}')''')
     cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title)
             VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}', 
-                    '{list_title}')''')# , '{list_description}')''')
+                    '{list_title}')''')  # , '{list_description}')''')
     # VALUES ({item['id']}, {item['company_url']}, {item['company']}, {item['location']}, {item['title']},
     # {item['description']})''')
 
@@ -66,8 +66,8 @@ def main():
     # insert_into_jobs_db(cursor, GithubJobsAPI.jobs_list)
     print(str(len(jobs_list)) + " jobs available.")
     for item in jobs_list:  # cycle though the list
-        insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
-                            item['description'])
+        insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'])
+        # item['description'])
     # print(type(conn))
     close_db(conn)
 
