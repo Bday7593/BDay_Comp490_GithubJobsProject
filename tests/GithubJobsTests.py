@@ -52,10 +52,11 @@ def good_data():
 # data as a parameter to your function, and have it save the data to the database). Try to save some good data,
 # try to save some bad data and make sure that this test fails (and mark it as expected to fail so that the rest of
 # the tests continue)
-def test_insert_into_jobs_db():
-    g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
+def insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type):
+    # g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
     conn, cursor = GithubJobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
     cursor = conn.cursor()
+    # this will attempt to insert a series of strings into the database which should pass no problem.
     try:
         cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
                         VALUES ('{g_id}', '{g_url}', '{g_company}', '{g_location}', '{g_title}', '{g_job_type}')''')
@@ -63,3 +64,15 @@ def test_insert_into_jobs_db():
     except ValueError:
         print("Oops! There was no valid string data input")
         GithubJobsDB.close_db(conn)
+
+
+def test_inserting_data_into_db():
+    b_id, b_url, b_company, b_location, b_title, b_job_type = 100, "bAd DaTa", "This is bad data", 75, '!', 8.6
+    insert_into_jobs_db(b_id, b_url, b_company, b_location, b_title, b_job_type)
+    g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
+    insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type)
+
+# write one more automated test
+# sometimes my program fails before it starts and i think it is because it the connection to the website fails.
+# I will write an automated test on testing the url connection.
+# def test_url_connection():
