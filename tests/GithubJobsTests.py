@@ -1,5 +1,6 @@
 # Brian Day
 # Comp 490 - Development Seminar
+
 import GithubJobsDB
 
 
@@ -39,3 +40,24 @@ def test_does_table_exits():
         # print('Table exists.')
         GithubJobsDB.close_db(conn)
         assert True
+
+
+def good_data():
+    g_id, g_url, g_company, g_location, g_title, g_job_type = "GOOD DATA", "GOOD DATA", "GOOD DATA", "GOOD DATA", \
+                                                              "GOOD DATA", "GOOD DATA "
+    return g_id, g_url, g_company, g_location, g_title, g_job_type
+
+
+# write a series of tests to make sure your function/method that saves to the database works properly. (send some
+# data as a parameter to your function, and have it save the data to the database). Try to save some good data,
+# try to save some bad data and make sure that this test fails (and mark it as expected to fail so that the rest of
+# the tests continue)
+def test_insert_into_jobs_db():
+    g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
+    conn, cursor = GithubJobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
+    cursor = conn.cursor()
+    try:
+        cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
+                        VALUES ('{g_id}', '{g_url}', '{g_company}', '{g_location}', '{g_title}', '{g_job_type}')''')
+    except ValueError:
+        print("Oops! There was no valid string data input")
