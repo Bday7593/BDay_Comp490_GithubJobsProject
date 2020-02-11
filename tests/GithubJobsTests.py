@@ -26,3 +26,16 @@ def test_write_jobs_to_db():
         data_found = True
     GithubJobsDB.close_db(conn)
     assert data_found
+
+
+# write a test to make sure that the table exists in the database after your program runs
+def test_does_table_exits():
+    conn, cursor = GithubJobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
+    cursor = conn.cursor()
+    # get the count of tables with the name
+    cursor.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='jobs' ''')
+    # if the count is 1, then table exists
+    if cursor.fetchone()[0] == 1:
+        # print('Table exists.')
+        GithubJobsDB.close_db(conn)
+        assert True
