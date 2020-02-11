@@ -59,5 +59,7 @@ def test_insert_into_jobs_db():
     try:
         cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
                         VALUES ('{g_id}', '{g_url}', '{g_company}', '{g_location}', '{g_title}', '{g_job_type}')''')
+        GithubJobsDB.close_db(conn)
     except ValueError:
         print("Oops! There was no valid string data input")
+        GithubJobsDB.close_db(conn)
