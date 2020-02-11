@@ -5,6 +5,7 @@ Project 1: Github Jobs API
 
 
 The readme should have:
+SPRINT 1:
     a.) Any install and run directions I need beyond the basics.
         -only basic installation should be required to run.
     b.) A brief description of what your project does.
@@ -15,3 +16,9 @@ The readme should have:
             ensuring the correct data was written into the text document.  
     c.) A brief description of what is missing from the project (if anything)
         - No missing material.
+        
+SPRINT 2:
+    a.) update the install and running instructions in the readme.
+        - If there are no files in the database the program MUST be run before being
+            pushed to git. The database needs to populate with the jobs from github API
+            to be test properly. 
