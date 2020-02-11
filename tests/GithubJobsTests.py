@@ -1,5 +1,6 @@
 # Brian Day
 # Comp 490 - Development Seminar
+import requests
 
 import GithubJobsDB
 
@@ -72,7 +73,12 @@ def test_inserting_data_into_db():
     g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
     insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type)
 
+
 # write one more automated test
 # sometimes my program fails before it starts and i think it is because it the connection to the website fails.
 # I will write an automated test on testing the url connection.
-# def test_url_connection():
+def test_url_connection():
+    try:
+        requests.get('https://jobs.github.com/positions.json?page=1')
+    except ValueError:
+        print("There was no valid web-page at that URL")
