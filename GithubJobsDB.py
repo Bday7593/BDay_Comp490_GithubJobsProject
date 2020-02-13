@@ -42,17 +42,43 @@ def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_
     # , '{list_description}')''')
 
 
+def create_task(conn, task):
+    """
+    Create a new task
+    :param conn:
+    :param task:
+    :return:
+    """
+
+    sql = ''' INSERT INTO JOBS(id, company_url, company, location, title, job_type)
+              VALUES(?,?,?,?,?,?) '''
+    cursor = conn.cursor()
+    cursor.execute(sql, task)
+    return cursor.lastrowid
+
+
 def main():
     github_jobs_list = []
-    stack_overflow_jobs_list = []
+    # stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()
     GithubJobsAPI.github_jobs_search(github_jobs_list)  # run the job search to store the job data into the list.
-    StackOverflowJobsRSS.stack_overflow_jobs_search(stack_overflow_jobs_list)
+    # StackOverflowJobsRSS.stack_overflow_jobs_search(stack_overflow_jobs_list)
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     setup_db(cursor)
     print(str(len(github_jobs_list)) + " jobs available.")
+
+    # tasks
+    # task_1 = ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02')
+    # task_2 = ('Confirm with user about the top requirements', 1, 1, project_id, '2015-01-03', '2015-01-05')
+
+    # create tasks
+    # create_task(conn, task_1)
+    # create_task(conn, task_2)
     for item in github_jobs_list:  # cycle though the list
-        insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
-                            item['type'])
+        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'],
+                  item['type'])
+        create_task(conn, task_1)
+        # insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
+        #                    item['type'])
         # item['description'])
     # print(type(conn))
     close_db(conn)

@@ -18,7 +18,7 @@ def github_jobs_search(my_list):
         raw_data = requests.get(url1)  # requesting the URL and saving it as a data type
         print("PAGE = " + str(page))
         store_data(raw_data, my_list)
-        if len(my_list) % 50 != 0:
+        if len(my_list) % 50 != 0 or page == 10:
             break
         else:
             page = page + 1
