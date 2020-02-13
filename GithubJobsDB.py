@@ -5,6 +5,7 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
+import StackOverflowJobsRSS
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -42,13 +43,14 @@ def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_
 
 
 def main():
-    jobs_list = []
-    GithubJobsAPI.github_jobs_search(jobs_list)  # run the job search to store the job data into the list.
-
+    github_jobs_list = []
+    stack_overflow_jobs_list = []
+    GithubJobsAPI.github_jobs_search(github_jobs_list)  # run the job search to store the job data into the list.
+    StackOverflowJobsRSS.stack_overflow_jobs_search(stack_overflow_jobs_list)
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     setup_db(cursor)
-    print(str(len(jobs_list)) + " jobs available.")
-    for item in jobs_list:  # cycle though the list
+    print(str(len(github_jobs_list)) + " jobs available.")
+    for item in github_jobs_list:  # cycle though the list
         insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
                             item['type'])
         # item['description'])
