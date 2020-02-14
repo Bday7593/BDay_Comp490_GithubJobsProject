@@ -5,7 +5,6 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
-import StackOverflowJobsRSS
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -28,18 +27,25 @@ def setup_db(cursor: sqlite3.Cursor):
     title TEXT NOT NULL,
     job_type TEXT NOT NULL
     );''')
+
+
 # description TEXT DEFAULT NULL
 
 
-def insert_into_jobs_db(cursor: sqlite3.Cursor, list_id, list_company_url, list_company, list_location,
-                        list_title, list_job_type):
+def insert_github_jobs_into_jobs_db(github_jobs_list):
     # list_description):
     # print(str(len(my_list)) + " jobs available.")
     # print(f'''INSERT INTO JOBS (id, company_url, company, location, title, description)
-    cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
-            VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}', '{list_title}',
-                '{list_job_type}')''')
+    # cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
+    #        VALUES ('{list_id}', '{list_company_url}', '{list_company}', '{list_location}', '{list_title}',
+    #            '{list_job_type}')''')
     # , '{list_description}')''')
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    for item in github_jobs_list:  # cycle though the list
+        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'],
+                  item['type'])
+        create_task(conn, task_1)
+    close_db(conn)  # close database when all done.
 
 
 def create_task(conn, task):
@@ -64,7 +70,6 @@ def main():
     # StackOverflowJobsRSS.stack_overflow_jobs_search(stack_overflow_jobs_list)
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     setup_db(cursor)
-    print(str(len(github_jobs_list)) + " jobs available.")
 
     # tasks
     # task_1 = ('Analyze the requirements of the app', 1, 1, project_id, '2015-01-01', '2015-01-02')
@@ -73,13 +78,16 @@ def main():
     # create tasks
     # create_task(conn, task_1)
     # create_task(conn, task_2)
-    for item in github_jobs_list:  # cycle though the list
-        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'],
-                  item['type'])
-        create_task(conn, task_1)
-        # insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
-        #                    item['type'])
-        # item['description'])
+    insert_github_jobs_into_jobs_db(github_jobs_list)
+    print(str(len(github_jobs_list)) + " jobs available.")
+
+    # for item in github_jobs_list:  # cycle though the list
+    #    task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'],
+    #               item['type'])
+    #     create_task(conn, task_1)
+    # insert_into_jobs_db(cursor, item['id'], item['company_url'], item['company'], item['location'], item['title'],
+    #                    item['type'])
+    # item['description'])
     # print(type(conn))
     close_db(conn)
 
