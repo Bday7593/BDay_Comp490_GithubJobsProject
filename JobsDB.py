@@ -24,10 +24,12 @@ def setup_db(cursor: sqlite3.Cursor):
     id TEXT PRIMARY KEY,
     company_url TEXT NOT NULL,
     company TEXT NOT NULL,
-    location TEXT NULL,
+    location TEXT DEFAULT NULL,
     title TEXT NOT NULL,
-    job_type TEXT NOT NULL
+    job_type TEXT DEFAULT NULL
     );''')
+
+
 # description TEXT DEFAULT NULL
 
 
@@ -51,23 +53,24 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
         task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'], item['type'])
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
-    print("Github jobs available: " + str(len(github_jobs_list)))
+    print("Github jobs available:           " + str(len(github_jobs_list)))
 
 
 def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for post in stack_overflow_jobs_data:  # cycle though the list
-        task_1 = (str(post.guid), post.link, post.author, " ", post.title, " ")
+        task_1 = (post.guid, post.link, post.author, " ", post.title, " ")
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
+    print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
 
 
 def main():
-    github_jobs_list = []
-    stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()
-    GithubJobsAPI.github_jobs_search(github_jobs_list)  # run the job search to store the job data into the list.
+    github_jobs_list = GithubJobsAPI.github_jobs_search()  # store github job data into the list.
+    stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()  # store stack overflow jobs
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     setup_db(cursor)
+
     # methods to do the inserting into db.
     insert_github_jobs_into_jobs_db(github_jobs_list)
     insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
