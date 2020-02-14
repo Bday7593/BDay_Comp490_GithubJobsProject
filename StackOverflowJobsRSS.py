@@ -31,7 +31,6 @@ def stack_overflow_jobs_search():
 
 
 def main():
-    stack_overflow_jobs_list = []
     stack_overflow_jobs_search()
     # print("The amount of entries in stack_overflow_jobs_list = " + str(stack_overflow_jobs_list['feed'][0]['link']))
 

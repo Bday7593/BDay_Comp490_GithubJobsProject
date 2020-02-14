@@ -5,7 +5,6 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
-import feedparser
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -55,8 +54,7 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
     # , '{list_description}')''')
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for item in github_jobs_list:  # cycle though the list
-        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'],
-                  item['type'])
+        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'], item['type'])
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
 
@@ -64,8 +62,7 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
 def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for post in stack_overflow_jobs_data:  # cycle though the list
-        task_1 = (post.guid, post.link, post.author, " ", post.title,
-                  " ")
+        task_1 = (post.guid, post.link, post.author, " ", post.title, " ")
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
 
