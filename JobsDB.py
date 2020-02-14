@@ -5,6 +5,7 @@ import sqlite3
 from typing import Tuple
 
 import GithubJobsAPI
+import feedparser
 
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
@@ -27,9 +28,21 @@ def setup_db(cursor: sqlite3.Cursor):
     title TEXT NOT NULL,
     job_type TEXT NOT NULL
     );''')
-
-
 # description TEXT DEFAULT NULL
+
+
+def create_task(conn, task):
+    """
+    Create a new task
+    :param conn:
+    :param task:
+    :return:
+    """
+    sql = ''' INSERT INTO JOBS(id, company_url, company, location, title, job_type)
+              VALUES(?,?,?,?,?,?) '''
+    cursor = conn.cursor()
+    cursor.execute(sql, task)
+    return cursor.lastrowid
 
 
 def insert_github_jobs_into_jobs_db(github_jobs_list):
@@ -48,19 +61,13 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
     close_db(conn)  # close database when all done.
 
 
-def create_task(conn, task):
-    """
-    Create a new task
-    :param conn:
-    :param task:
-    :return:
-    """
-
-    sql = ''' INSERT INTO JOBS(id, company_url, company, location, title, job_type)
-              VALUES(?,?,?,?,?,?) '''
-    cursor = conn.cursor()
-    cursor.execute(sql, task)
-    return cursor.lastrowid
+def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    for post in stack_overflow_jobs_data:  # cycle though the list
+        task_1 = (post.guid, post.link, post.author, " ", post.title,
+                  " ")
+        create_task(conn, task_1)
+    close_db(conn)  # close database when all done.
 
 
 def main():
