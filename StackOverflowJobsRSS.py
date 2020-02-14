@@ -13,18 +13,19 @@ def stack_overflow_jobs_search():
     # Create the feed.Put in the RSS feed that you want.
     stack_overflow_jobs_data = feedparser.parse('https://stackoverflow.com/jobs/feed')
     print(stack_overflow_jobs_data['feed']['title'])
-    print(stack_overflow_jobs_data.feed.subtitle)
+    # print(stack_overflow_jobs_data.feed.subtitle)
     print("The Stack Overflow URL is: " + stack_overflow_jobs_data['feed']['link'])
+    print("Stack Overflow jobs available: ")
     print(len(stack_overflow_jobs_data['entries']))
     # print(stack_overflow_jobs_data.entries[0]['link'])
     print()
     for post in stack_overflow_jobs_data.entries:
         print("post.author:     " + post.author)
         # print("post.category:     " + post.category)
-        print("post.title:      " + post.title)
+        #     print("post.title:      " + post.title)
         print("post.guid:       " + post.guid)
-        print("post.description: " + post.description)
-        print("post.link:       " + post.link)
+    #     print("post.description: " + post.description)
+    #     print("post.link:       " + post.link)
         print()
     return stack_overflow_jobs_data
     # store_data(stack_overflow_jobs_data, my_list)
@@ -32,7 +33,6 @@ def stack_overflow_jobs_search():
 
 def main():
     stack_overflow_jobs_search()
-    # print("The amount of entries in stack_overflow_jobs_list = " + str(stack_overflow_jobs_list['feed'][0]['link']))
 
 
 if __name__ == '__main__':
