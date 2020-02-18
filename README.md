@@ -17,7 +17,7 @@ SPRINT 1:
     c.) A brief description of what is missing from the project (if anything)
         - No missing material.
         
-SPRINT 2:
+SPRINT 2, 3:
     a.) update the install and running instructions in the readme.
         - If there are no files in the database the program MUST be run before being
             pushed to git. The database needs to populate with the jobs from github API
