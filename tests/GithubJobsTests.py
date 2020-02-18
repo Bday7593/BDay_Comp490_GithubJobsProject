@@ -1,7 +1,6 @@
 # Brian Day
 # Comp 490 - Development Seminar
 import requests
-
 import JobsDB
 
 
@@ -50,7 +49,7 @@ def good_data():
 
 
 def bad_data():
-    b_id, b_url, b_company, b_location, b_title, b_job_type = 100, "bAd DaTa", "This is bad data", 75, '!', 8.6
+    b_id, b_url, b_company, b_location, b_title, b_job_type = 100, "bAd DaTa", "ThIs Is bAd dAtA", 75, '!', 8.6
     return b_id, b_url, b_company, b_location, b_title, b_job_type
 
 
@@ -58,16 +57,15 @@ def bad_data():
 # data as a parameter to your function, and have it save the data to the database). Try to save some good data,
 # try to save some bad data and make sure that this test fails (and mark it as expected to fail so that the rest of
 # the tests continue)
-def insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type):
-    # g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
+def insert_into_jobs_db(some_id, url, company, location, title, job_type):
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
     cursor = conn.cursor()
     # this will attempt to insert a series of strings into the database which should pass no problem.
     try:
         cursor.execute(f'''INSERT INTO JOBS (id, company_url, company, location, title, job_type)
-                        VALUES ('{g_id}', '{g_url}', '{g_company}', '{g_location}', '{g_title}', '{g_job_type}')''')
+                        VALUES ('{some_id}', '{url}', '{company}', '{location}', '{title}', '{job_type}')''')
         JobsDB.close_db(conn)
-    except ValueError:
+    except AttributeError:
         print("Oops! There was no valid string data input")
         JobsDB.close_db(conn)
 
@@ -77,8 +75,14 @@ def test_inserting_data_into_db():
     b_id, b_url, b_company, b_location, b_title, b_job_type = bad_data()
     g_id, g_url, g_company, g_location, g_title, g_job_type = good_data()
     # attempt to test the good and bad data.
-    insert_into_jobs_db(b_id, b_url, b_company, b_location, b_title, b_job_type)
-    insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type)
+    try:
+        insert_into_jobs_db(g_id, g_url, g_company, g_location, g_title, g_job_type)
+    except AttributeError:
+        print("Oops! There was some invalid good data input")
+    try:
+        insert_into_jobs_db(b_id, b_url, b_company, b_location, b_title, b_job_type)
+    except AttributeError:
+        print("Oops! There was some invalid bad data input")
 
 
 # write one more automated test

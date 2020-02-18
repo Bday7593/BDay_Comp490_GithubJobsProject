@@ -1,7 +1,6 @@
 # Brian Day
 # Comp 490 - Development Seminar
 
-# import json
 import requests
 
 

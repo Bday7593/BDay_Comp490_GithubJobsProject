@@ -28,11 +28,10 @@ def setup_db(cursor: sqlite3.Cursor):
     title TEXT NOT NULL,
     job_type TEXT DEFAULT NULL
     );''')
-
-
 # description TEXT DEFAULT NULL
 
 
+# from https://www.sqlitetutorial.net/sqlite-python/insert/
 def create_task(conn, task):
     """
     Create a new task
@@ -59,7 +58,7 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
 def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for post in stack_overflow_jobs_data:  # cycle though the list
-        task_1 = (post.guid, post.link, post.author, " ", post.title, " ")
+        task_1 = (post.guid, post.link, post.author, None, post.title, None)
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
