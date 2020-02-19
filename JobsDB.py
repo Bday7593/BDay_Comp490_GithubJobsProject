@@ -58,7 +58,12 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
 def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for post in stack_overflow_jobs_data:  # cycle though the list
-        task_1 = (post.guid, post.link, post.author, None, post.title, None)
+        post_location = post.title.split('(')
+        location = post_location[1].split(')')
+        location = location[0]
+        if location == '':
+            location = "Remote"
+        task_1 = (post.guid, post.link, post.author, location, post.title, None)
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
