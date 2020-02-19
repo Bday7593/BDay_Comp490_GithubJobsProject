@@ -3,6 +3,8 @@
 
 import sqlite3
 from typing import Tuple
+# from geotext import GeoText
+
 
 import GithubJobsAPI
 import StackOverflowJobsRSS
@@ -63,7 +65,15 @@ def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
         location = location[0]
         if location == '':
             location = "Remote"
-        task_1 = (post.guid, post.link, post.author, location, post.title, None)
+        if post.title.find("full-time") <= 9:
+            job_type = "Full-time"
+        elif post.title.find("full time") <= 1:
+            job_type = "Full-time"
+        else:
+            job_type = "part-time"
+        # places = GeoText(post.title)
+        # print(str(places.cities + ", " + places.countries))
+        task_1 = (post.guid, post.link, post.author, location, post.title, job_type)
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
