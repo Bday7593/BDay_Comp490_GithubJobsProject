@@ -12,11 +12,11 @@ def store_data(data, my_list):
 def stack_overflow_jobs_search():
     # Create the feed.Put in the RSS feed that you want.
     stack_overflow_jobs_data = feedparser.parse('https://stackoverflow.com/jobs/feed')
-    print(stack_overflow_jobs_data['feed']['title'])
+    # print(stack_overflow_jobs_data['feed']['title'])
     # print(stack_overflow_jobs_data.feed.subtitle)
-    print("The Stack Overflow URL is: " + stack_overflow_jobs_data['feed']['link'])
-    print("Stack Overflow jobs available: ")
-    print(len(stack_overflow_jobs_data['entries']))
+    # print("The Stack Overflow URL is: " + stack_overflow_jobs_data['feed']['link'])
+    # print("Stack Overflow jobs available: ")
+    # print(len(stack_overflow_jobs_data['entries']))
     # print(stack_overflow_jobs_data.entries[0]['link'])
     print()
     # for post in stack_overflow_jobs_data.entries:

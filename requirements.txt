@@ -1,2 +1,6 @@
+geotext
+geopy
+pandas
+plotly
 feedparser
 requests

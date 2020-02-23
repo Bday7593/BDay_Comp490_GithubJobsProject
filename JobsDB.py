@@ -3,8 +3,7 @@
 
 import sqlite3
 from typing import Tuple
-# from geotext import GeoText
-
+from geotext import GeoText
 
 import GithubJobsAPI
 import StackOverflowJobsRSS
@@ -30,6 +29,8 @@ def setup_db(cursor: sqlite3.Cursor):
     title TEXT NOT NULL,
     job_type TEXT DEFAULT NULL
     );''')
+
+
 # description TEXT DEFAULT NULL
 
 
@@ -51,32 +52,71 @@ def create_task(conn, task):
 def insert_github_jobs_into_jobs_db(github_jobs_list):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for item in github_jobs_list:  # cycle though the list
+        # place = GeoText(item['location'])
         task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'], item['type'])
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Github jobs available:           " + str(len(github_jobs_list)))
 
 
+def get_geotext_location(places):
+    city, country = "", ""
+    found_city, found_country = False, False
+    # print(str(places.cities) + ", " + str(places.countries))
+    if len(places.cities) > 0:
+        # print("city: " + places.cities[0])
+        city = places.cities
+        found_city = True
+    if len(places.countries) > 0:
+        # print("country: " + places.countries[0])
+        country = places.countries
+        found_country = True
+    if found_city is True and found_country is True:
+        location = str(city[0] + ", " + country[0])
+        # print("location:    " + location)
+    elif found_city is True:
+        location = str(city[0])
+        # print("location:    " + location)
+    elif found_country is True:
+        location = str(country[0])
+        # print("location:    " + location)
+    else:
+        location = "Remote"
+    return location
+
+
 def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for post in stack_overflow_jobs_data:  # cycle though the list
-        post_location = post.title.split('(')
-        location = post_location[1].split(')')
-        location = location[0]
-        if location == '':
-            location = "Remote"
+        places = GeoText(post.title)
+        location = get_geotext_location(places)
         if post.title.find("full-time") <= 9:
             job_type = "Full-time"
         elif post.title.find("full time") <= 1:
             job_type = "Full-time"
         else:
             job_type = "part-time"
-        # places = GeoText(post.title)
-        # print(str(places.cities + ", " + places.countries))
         task_1 = (post.guid, post.link, post.author, location, post.title, job_type)
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
+
+
+# https://www.sqlitetutorial.net/sqlite-python/sqlite-python-select/
+def select_all_jobs(conn):
+    """
+    Query all rows in the tasks table
+    :param conn: the Connection object
+    :return:
+    """
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM jobs")
+
+    rows = cur.fetchall()
+
+    # for row in rows:
+    #    print("Company: " + row[2] + "      Location: " + row[3])
+    return rows
 
 
 def main():
@@ -88,6 +128,7 @@ def main():
     # methods to do the inserting into db.
     insert_github_jobs_into_jobs_db(github_jobs_list)
     insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
+    select_all_jobs(conn)
     close_db(conn)
 
 
