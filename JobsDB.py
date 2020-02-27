@@ -29,9 +29,12 @@ def setup_db(cursor: sqlite3.Cursor):
     title TEXT NOT NULL,
     job_type TEXT DEFAULT NULL
     );''')
-
-
-# description TEXT DEFAULT NULL
+    # description TEXT DEFAULT NULL
+    cursor.execute('''CREATE TABLE IF NOT EXISTS job_locations(
+    location TEXT DEFAULT NULL,
+    lat REAL NOT NULL,
+    lon REAL NOT NULL
+    );''')
 
 
 # from https://www.sqlitetutorial.net/sqlite-python/insert/
@@ -47,6 +50,28 @@ def create_task(conn, task):
     cursor = conn.cursor()
     cursor.execute(sql, task)
     return cursor.lastrowid
+
+
+# from https://www.sqlitetutorial.net/sqlite-python/insert/
+def create_task_insert_locations_db(conn, task):
+    """
+    Create a new task
+    :param conn:
+    :param task:
+    :return:
+    """
+    sql = ''' INSERT INTO JOB_LOCATIONS(location, lat, lon)
+              VALUES(?,?,?) '''
+    cursor = conn.cursor()
+    cursor.execute(sql, task)
+    return cursor.lastrowid
+
+
+def insert_locations_into_jobs_locations_db(job_location, company, lat, lon):
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    task_1 = (job_location, company,  lat, lon)
+    create_task_insert_locations_db(conn, task_1)
+    close_db(conn)  # close database when all done.
 
 
 def insert_github_jobs_into_jobs_db(github_jobs_list):
@@ -103,19 +128,17 @@ def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
 
 
 # https://www.sqlitetutorial.net/sqlite-python/sqlite-python-select/
-def select_all_jobs(conn):
+def select_all_jobs(conn, table):
     """
     Query all rows in the tasks table
+    :param table:
     :param conn: the Connection object
     :return:
     """
     cur = conn.cursor()
-    cur.execute("SELECT * FROM jobs")
+    cur.execute("SELECT * FROM {}".format(table))
 
     rows = cur.fetchall()
-
-    # for row in rows:
-    #    print("Company: " + row[2] + "      Location: " + row[3])
     return rows
 
 
@@ -128,7 +151,7 @@ def main():
     # methods to do the inserting into db.
     insert_github_jobs_into_jobs_db(github_jobs_list)
     insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
-    select_all_jobs(conn)
+    select_all_jobs(conn, "jobs")
     close_db(conn)
 
 
