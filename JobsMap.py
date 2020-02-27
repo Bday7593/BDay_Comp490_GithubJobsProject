@@ -32,7 +32,6 @@ def store_coordinates_in_db(job_locations_list):
     for item in job_locations_list:
         print("Trying to find Remote:   " + str(item[3].find("Remote")))
         if str(item[3].find("Remote")) != "-1":
-            # if item[3] == "Remote":
             print("This is a remote job")
         else:
             if has_value(cursor, "job_locations", 'location', item[3]) is True:
@@ -41,11 +40,11 @@ def store_coordinates_in_db(job_locations_list):
                 print(item[3] + " does not exist!!! inserting into database.")
                 try:
                     latitude, longitude = do_geocode(item[3])
-                    JobsDB.insert_locations_into_jobs_locations_db(item[3], item[2], latitude, longitude)
+                    JobsDB.insert_locations_into_jobs_locations_db(item[3], latitude, longitude)
                 except GeocoderTimedOut:
                     print("GEOCODER TIMEDOUT!!!!! BEGIN RECURSIVE FUNCTION.")
                     latitude, longitude = do_geocode(item[3])
-                    JobsDB.insert_locations_into_jobs_locations_db(item[3], item[2], latitude, longitude)
+                    JobsDB.insert_locations_into_jobs_locations_db(item[3], latitude, longitude)
                 except AttributeError:
                     print("Not a valid location or unknown location.")
     JobsDB.close_db(conn)
@@ -95,8 +94,8 @@ def show_select_with_join(cursor: sqlite3.Cursor):
 
 def main():
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
-    # job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
-    # store_coordinates_in_db(job_locations_list)
+    job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
+    store_coordinates_in_db(job_locations_list)
     job_lat_lon = JobsDB.select_all_jobs(conn, "job_locations")
     # testing = show_select_with_join(cursor)
     map_jobs(job_lat_lon)

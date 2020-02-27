@@ -67,9 +67,9 @@ def create_task_insert_locations_db(conn, task):
     return cursor.lastrowid
 
 
-def insert_locations_into_jobs_locations_db(job_location, company, lat, lon):
+def insert_locations_into_jobs_locations_db(job_location, lat, lon):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
-    task_1 = (job_location, company,  lat, lon)
+    task_1 = (job_location, lat, lon)
     create_task_insert_locations_db(conn, task_1)
     close_db(conn)  # close database when all done.
 
