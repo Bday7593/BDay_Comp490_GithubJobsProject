@@ -1,6 +1,5 @@
 # Brian Day
 # Comp 490 - Development Seminar
-import sqlite3
 
 import pandas as pd
 import plotly.express as px
@@ -27,7 +26,7 @@ def do_geocode(address):
     return geocode_location.latitude, geocode_location.longitude
 
 
-def store_coordinates_in_db(job_locations_list):
+def cache_coordinates_in_db(job_locations_list):
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
     for item in job_locations_list:
         print("Trying to find Remote:   " + str(item[3].find("Remote")))
@@ -50,11 +49,17 @@ def store_coordinates_in_db(job_locations_list):
     JobsDB.close_db(conn)
 
 
-def map_jobs(job_lat_lon):
+def create_dataframe(job_lat_lon):
     dict_of_locations = {i: job_lat_lon[i] for i in range(0, len(job_lat_lon))}
-    df = pd.DataFrame.from_dict(dict_of_locations, orient='index', columns=['location', 'lat', 'lon'])
+    df = pd.DataFrame.from_dict(dict_of_locations, orient='index',
+                                columns=['location', 'lat', 'lon', 'company', 'title'])
+    print("dataframe:")
     print(df)
-    fig = px.scatter_mapbox(df, lat="lat", lon="lon", hover_name="location", hover_data=None,
+    return df
+
+
+def map_jobs(df):
+    fig = px.scatter_mapbox(df, lat="lat", lon="lon", hover_name="location", hover_data=["company", "title"],
                             color_discrete_sequence=["fuchsia"], zoom=3, height=900)
 
     fig.update_layout(
@@ -78,29 +83,38 @@ def map_jobs(job_lat_lon):
     fig.show()
 
 
-def show_select_with_join(cursor: sqlite3.Cursor):
-    result = cursor.execute(f'''SELECT jobs.location, company, title
+def show_select_with_join_lat_lon(conn):
+    """
+       Query all rows in the tasks table
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    cursor.execute(f'''SELECT jobs.location, job_locations.lat, job_locations.lon, company, title
     FROM jobs
     INNER JOIN job_locations ON
     jobs.location = job_locations.location''')
-    # WHERE (jobs.credits < 60
-    # and CLASS_LIST.course_prefix = 'Comp'
-    # and CLASS_LIST.course_number = 490)''')
-    for row in result:
-        print(f' jobs.location: {row[0]}. company: {row[1]}. title: {row[2]}. ')
-    rows = cursor.fetchall()
-    return rows
+    result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
 
 
 def main():
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
-    job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
-    store_coordinates_in_db(job_locations_list)
-    job_lat_lon = JobsDB.select_all_jobs(conn, "job_locations")
-    # testing = show_select_with_join(cursor)
-    map_jobs(job_lat_lon)
+    # job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
+    # cache_coordinates_in_db(job_locations_list)
+    # job_lat_lon = JobsDB.select_all_jobs(conn, "job_locations")
 
-    show_select_with_join(cursor)
+    testing = show_select_with_join_lat_lon(conn)
+    print("Testing:")
+    print(testing)
+    print()
+
+    df = create_dataframe(testing)
+    map_jobs(df)
+
+    # show_select_with_join_lat_lon(conn, cursor)
 
     JobsDB.close_db(conn)
 
