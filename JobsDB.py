@@ -142,6 +142,45 @@ def select_all_jobs(conn, table):
     return rows
 
 
+def fill_tables():
+    github_jobs_list = GithubJobsAPI.github_jobs_search()  # store github job data into the list.
+    stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()  # store stack overflow jobs
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    setup_db(cursor)
+
+    # methods to do the inserting into db.
+    insert_github_jobs_into_jobs_db(github_jobs_list)
+    insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
+    select_all_jobs(conn, "jobs")
+    close_db(conn)
+
+
+def show_select_with_join_lat_lon(conn):
+    """
+       Query all rows in the tasks table
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    cursor.execute(f'''SELECT jobs.location, job_locations.lat, job_locations.lon, company, title
+    FROM jobs
+    INNER JOIN job_locations ON
+    jobs.location = job_locations.location''')
+    result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
+
+
+# This code constructs a query for the given table, column, and value and
+# returns True if there is at least one row with the required value, otherwise it returns False.
+# https://stackoverflow.com/questions/39282991/python-checking-sql-database-column-for-value
+def has_value(cursor, table, column, value):
+    query = 'SELECT * from {} WHERE {} = ? LIMIT 1'.format(table, column)
+    return cursor.execute(query, (value,)).fetchone() is not None
+
+
+"""
 def main():
     github_jobs_list = GithubJobsAPI.github_jobs_search()  # store github job data into the list.
     stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()  # store stack overflow jobs
@@ -157,3 +196,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""

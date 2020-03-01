@@ -9,17 +9,6 @@ from geopy.exc import GeocoderTimedOut
 import JobsDB
 
 
-# us_cities = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/us-cities-top-1k.csv")
-
-
-# This code constructs a query for the given table, column, and value and
-# returns True if there is at least one row with the required value, otherwise it returns False.
-# https://stackoverflow.com/questions/39282991/python-checking-sql-database-column-for-value
-def has_value(cursor, table, column, value):
-    query = 'SELECT * from {} WHERE {} = ? LIMIT 1'.format(table, column)
-    return cursor.execute(query, (value,)).fetchone() is not None
-
-
 def do_geocode(address):
     locator = Nominatim(user_agent="myGeocoder")
     geocode_location = locator.geocode(address)
@@ -33,7 +22,7 @@ def cache_coordinates_in_db(job_locations_list):
         if str(item[3].find("Remote")) != "-1":
             print("This is a remote job")
         else:
-            if has_value(cursor, "job_locations", 'location', item[3]) is True:
+            if JobsDB.has_value(cursor, "job_locations", 'location', item[3]) is True:
                 print("We found " + item[3] + " in the database.")
             else:
                 print(item[3] + " does not exist!!! inserting into database.")
@@ -53,11 +42,12 @@ def create_dataframe(job_lat_lon):
     dict_of_locations = {i: job_lat_lon[i] for i in range(0, len(job_lat_lon))}
     df = pd.DataFrame.from_dict(dict_of_locations, orient='index',
                                 columns=['location', 'lat', 'lon', 'company', 'title'])
-    print("dataframe:")
+    print("DATAFRAME:")
     print(df)
     return df
 
 
+# https://plot.ly/python/mapbox-layers/
 def map_jobs(df):
     fig = px.scatter_mapbox(df, lat="lat", lon="lon", hover_name="location", hover_data=["company", "title"],
                             color_discrete_sequence=["fuchsia"], zoom=3, height=900)
@@ -83,38 +73,20 @@ def map_jobs(df):
     fig.show()
 
 
-def show_select_with_join_lat_lon(conn):
-    """
-       Query all rows in the tasks table
-       :param conn: the Connection object
-       :return:
-       """
-    cursor = conn.cursor()
-    cursor.execute(f'''SELECT jobs.location, job_locations.lat, job_locations.lon, company, title
-    FROM jobs
-    INNER JOIN job_locations ON
-    jobs.location = job_locations.location''')
-    result = cursor.fetchall()
-    # for row in result:
-    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
-    return result
-
-
 def main():
-    conn, cursor = JobsDB.open_db("JobsDB.sqlite")  # Open the database to store information.
-    # job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
-    # cache_coordinates_in_db(job_locations_list)
-    # job_lat_lon = JobsDB.select_all_jobs(conn, "job_locations")
+    # JobsDB.fill_tables()
+    conn, cursor = JobsDB.open_db("JobsDB.sqlite")
 
-    testing = show_select_with_join_lat_lon(conn)
-    print("Testing:")
-    print(testing)
+    job_locations_list = JobsDB.select_all_jobs(conn, "jobs")
+    cache_coordinates_in_db(job_locations_list)
+
+    combined_table = JobsDB.show_select_with_join_lat_lon(conn)
+    # print("COMBINED_TABLE:")
+    # print(combined_table)
     print()
 
-    df = create_dataframe(testing)
+    df = create_dataframe(combined_table)
     map_jobs(df)
-
-    # show_select_with_join_lat_lon(conn, cursor)
 
     JobsDB.close_db(conn)
 
