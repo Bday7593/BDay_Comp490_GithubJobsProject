@@ -134,12 +134,6 @@ def test_filter_by_company():
     assert comp_df is not None
 
 
-def test_filter_by_age_of_post():
-    Filters.reset_job_locations()
-    aop_df = Filters.filter_by_age_of_post("25/02/2020")
-    assert aop_df is not None
-
-
 def test_filter_by_title():
     Filters.reset_job_locations()
     title_df = Filters.filter_by_technology("Reporting Analyst")
