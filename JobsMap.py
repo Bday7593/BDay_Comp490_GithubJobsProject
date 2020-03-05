@@ -52,46 +52,34 @@ def create_dataframe(combined_table):
 # https://plot.ly/python/mapbox-layers/
 def map_jobs(df):
     fig = px.scatter_mapbox(df, lat="lat", lon="lon", hover_name="location", hover_data=["company", "title"],
-                            color_discrete_sequence=[""], zoom=3, height=900)
+                            color_discrete_sequence=["red"], zoom=3, height=900)
 
     fig.update_layout(
         mapbox_style="white-bg",
         mapbox_layers=[
             {
+                'name': 'Jobs Search',
                 "below": 'traces',
                 "sourcetype": "raster",
                 "source": [
                     "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
                 ]
             },
-            {
-                "sourcetype": "raster",
-                "source": ["https://geo.weather.gc.ca/geomet/?"
-                           "SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={bbox-epsg-3857}&CRS=EPSG:3857"
-                           "&WIDTH=1000&HEIGHT=1000&LAYERS=RADAR_1KM_RDBR&TILED=true&FORMAT=image/png"],
-            }
+
         ])
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     fig.show()
 
 
 def main():
-    # JobsDB.fill_jobs_table()
-    # display_map(df)
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")
 
-    # test_location_list = JobsDB.show_technology_from_job_table(conn, "swift")
-    # cache_coordinates_in_db(conn, test_location_list)
-    # test_combined_table = JobsDB.show_select_with_join_lat_lon(conn)
-    # print("TEST_COMBINED_TABLE:")
-    # print()
-
     # Filters.reset_job_locations()
-    df = Filters.filter_by_technology("swift")
+    # df = Filters.filter_by_technology("swift")
     # df = Filters.filter_by_company("Apple")
-    # map_jobs(df)
 
     # df = Filters.filter_by_age_of_post("25/02/2020")
+    df = Filters.filter_by_title("Senior")
     map_jobs(df)
     JobsDB.close_db(conn)
 

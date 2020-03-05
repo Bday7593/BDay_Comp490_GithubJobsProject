@@ -2,6 +2,8 @@
 # Comp 490 - Development Seminar
 import pytest
 import requests
+
+import Filters
 import JobsDB
 
 
@@ -118,3 +120,23 @@ def test_table_exists():
     result_cursor = cursor.execute(f"SELECT name from sqlite_master where (name = '{fake_table}')")
     success = len(result_cursor.fetchall()) >= 1
     assert success
+
+
+def test_filter_by_technology():
+    tech_df = Filters.filter_by_technology("java")
+    assert tech_df is not None
+
+
+def test_filter_by_company():
+    comp_df = Filters.filter_by_company("Apple")
+    assert comp_df is not None
+
+
+def test_filter_by_age_of_post():
+    aop_df = Filters.filter_by_age_of_post("25/02/2020")
+    assert aop_df is not None
+
+
+def test_filter_by_title():
+    title_df = Filters.filter_by_technology("Reporting Analyst")
+    assert title_df is not None
