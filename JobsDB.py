@@ -2,7 +2,7 @@
 # Comp 490 - Development Seminar
 
 import sqlite3
-from typing import Tuple
+from typing import Tuple, Dict, Any
 from geotext import GeoText
 
 import GithubJobsAPI
@@ -36,6 +36,44 @@ def setup_db(cursor: sqlite3.Cursor):
     lat REAL NOT NULL,
     lon REAL NOT NULL
     );''')
+
+
+def create_table(cursor: sqlite3.Cursor, description: Dict[str, str], table_name: str):
+    # build a create table statement, the column names are the keys in the dictionary
+    # the column type and constraints are the values in the dictionary
+    statement_start = f'''CREATE TABLE IF NOT EXISTS {table_name} ('''
+    column_text = ""
+    for column_name in description:
+        if len(column_text) > 0:
+            column_text = f"{column_text},"
+        column_text = f"""{column_text}
+{column_name} {description[column_name]}"""
+    create_statement = f"{statement_start} {column_text});"
+    cursor.execute(create_statement)
+    return create_statement
+
+
+def make_column_description_from_json_dict(json_rep: Dict[str, Any]) -> Dict[str, str]:
+    """This is a first pass at what the Pragmatic programmer talks about in the DRY section
+    In this case we don't want to represent the structure of the json data we download in our
+    code if we can help it, so I'm building the description of the table columns by analyzing the
+    dictionary"""
+    descriptor = {}  # this is our output a mapping of column names to descriptions to build our table
+    for key in json_rep:
+        # column_constraint = ''  # start with empty constraint then find the type of the data and choose the correct
+        # SQL type
+        if type(json_rep[key]) is str:
+            column_constraint = 'TEXT'
+        elif type(json_rep[key]) is int:
+            column_constraint = 'INTEGER'
+        elif type(json_rep[key]) is float:
+            column_constraint = 'REAL'
+        else:
+            column_constraint = 'BLOB'  # Blob data type is a generic byte by byte type
+        if len(descriptor) == 0:  # we will assume that the first item in the JSON dict is the primary key
+            column_constraint = f"{column_constraint} PRIMARY KEY"  # WARNING! this only works in python 3.6+
+        descriptor[key] = column_constraint
+    return descriptor
 
 
 def drop_table(conn, table_name):

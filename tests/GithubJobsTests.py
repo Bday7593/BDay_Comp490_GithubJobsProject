@@ -105,3 +105,16 @@ def test_url_connection():
         requests.get('https://jobs.github.com/positions.json?page=1')
     except ValueError:
         print("There was no valid web-page at that URL")
+
+
+def test_table_exists():
+    fake_table = 'test_table'
+    fake_row = {'id': 'F$RT%YH&', 'type': 'Full Time', 'url': 'http://wwww.fakedata.com', 'created_at': '02-12-2020',
+                'company': "Don't Work Here Comp", 'company_url': None, 'location': "giant urban metro",
+                'title': 'Junior software peon', 'description': "blah blah, devops, scrum, hot tech",
+                'how_to_apply': "http://runaway.com", 'company_logo': None}
+    connection, cursor = JobsDB.open_db('testonly.sqlite')
+    JobsDB.create_table(cursor, JobsDB.make_column_description_from_json_dict(fake_row), fake_table)
+    result_cursor = cursor.execute(f"SELECT name from sqlite_master where (name = '{fake_table}')")
+    success = len(result_cursor.fetchall()) >= 1
+    assert success
