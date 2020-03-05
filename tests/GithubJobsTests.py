@@ -13,7 +13,7 @@ def get_data():
 def test_jobs_list(get_data):
     # first required test
     assert len(get_data) >= 100
-    assert type(get_data[1]) is list
+    assert type(get_data[1]) is dict
 
 
 # one test should the method that retrieves the data from the web and assure that you get more than 100 data items
