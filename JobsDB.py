@@ -82,8 +82,8 @@ def drop_table(conn, table_name):
     print("Table: '{}' has been dropped ".format(table_name))
 
 
-# from https://www.sqlitetutorial.net/sqlite-python/insert/
 def create_task(conn, task):
+    # from https://www.sqlitetutorial.net/sqlite-python/insert/
     """
     Create a new task
     :param conn:
@@ -97,8 +97,8 @@ def create_task(conn, task):
     return cursor.fetchall()
 
 
-# from https://www.sqlitetutorial.net/sqlite-python/insert/
 def create_task_insert_locations_db(conn, task):
+    # from https://www.sqlitetutorial.net/sqlite-python/insert/
     """
     Create a new task
     :param conn:
@@ -191,8 +191,8 @@ def get_geotext_location(places):
     return location
 
 
-# https://www.sqlitetutorial.net/sqlite-python/sqlite-python-select/
 def select_all_rows(table):
+    # https://www.sqlitetutorial.net/sqlite-python/sqlite-python-select/
     """
     Query all rows in the tasks table
     :param table:
@@ -285,10 +285,10 @@ def show_created_at_from_job_table(conn):
     return result
 
 
-# This code constructs a query for the given table, column, and value and
-# returns True if there is at least one row with the required value, otherwise it returns False.
-# https://stackoverflow.com/questions/39282991/python-checking-sql-database-column-for-value
 def has_value(cursor, table, column, value):
+    # This code constructs a query for the given table, column, and value and
+    # returns True if there is at least one row with the required value, otherwise it returns False.
+    # https://stackoverflow.com/questions/39282991/python-checking-sql-database-column-for-value
     query = 'SELECT * from {} WHERE {} = ? LIMIT 1'.format(table, column)
     return cursor.execute(query, (value,)).fetchone() is not None
 
