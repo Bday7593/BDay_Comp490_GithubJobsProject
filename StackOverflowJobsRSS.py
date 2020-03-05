@@ -22,10 +22,13 @@ def stack_overflow_jobs_search():
     # for post in stack_overflow_jobs_data.entries:
     # print("post.author:     " + post.author)
     # print("post.category:     " + post.category)
-    #     print("post.title:      " + post.title)
+    # print("post.title:      " + post.title)
     # print("post.guid:       " + post.guid)
-    #     print("post.description: " + post.description)
-    #     print("post.link:       " + post.link)
+    # print("post.description: " + post.description)
+    # print("post.link:       " + post.link)
+    # print("post.published:       " + post.published)
+    # for entry in post:
+    # print(post.created)
     # print()
     return stack_overflow_jobs_data.entries
 

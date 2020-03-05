@@ -1,3 +1,7 @@
+pytest
+dash
+PySide2
+PyQt5
 sqlalchemy
 geotext
 geopy

@@ -1,7 +1,19 @@
 # Brian Day
 # Comp 490 - Development Seminar
+import pytest
 import requests
 import JobsDB
+
+
+@pytest.fixture
+def get_data():
+    return JobsDB.select_all_rows("jobs")
+
+
+def test_jobs_dict(get_data):
+    # first required test
+    assert len(get_data) >= 100
+    assert type(get_data[1]) is list
 
 
 # one test should the method that retrieves the data from the web and assure that you get more than 100 data items

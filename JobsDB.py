@@ -23,18 +23,25 @@ def close_db(connection: sqlite3.Connection):
 def setup_db(cursor: sqlite3.Cursor):
     cursor.execute('''CREATE TABLE IF NOT EXISTS jobs(
     id TEXT PRIMARY KEY,
-    company_url TEXT NOT NULL,
-    company TEXT NOT NULL,
+    company_url TEXT DEFAULT NULL,
+    company TEXT DEFAULT NULL,
     location TEXT DEFAULT NULL,
-    title TEXT NOT NULL,
-    job_type TEXT DEFAULT NULL
+    title TEXT DEFAULT NULL,
+    job_type TEXT DEFAULT NULL,
+    description TEXT DEFAULT NULL,
+    created_at TEXT DEFAULT NULL
     );''')
-    # description TEXT DEFAULT NULL
     cursor.execute('''CREATE TABLE IF NOT EXISTS job_locations(
     location TEXT DEFAULT NULL,
     lat REAL NOT NULL,
     lon REAL NOT NULL
     );''')
+
+
+def drop_table(conn, table_name):
+    cursor = conn.cursor()
+    cursor.execute("DROP TABLE {}".format(table_name))
+    print("Table: '{}' has been dropped ".format(table_name))
 
 
 # from https://www.sqlitetutorial.net/sqlite-python/insert/
@@ -45,11 +52,11 @@ def create_task(conn, task):
     :param task:
     :return:
     """
-    sql = ''' INSERT INTO JOBS(id, company_url, company, location, title, job_type)
-              VALUES(?,?,?,?,?,?) '''
+    sql = ''' INSERT INTO JOBS(id, company_url, company, location, title, job_type, description, created_at)
+              VALUES(?,?,?,?,?,?,?,?) '''
     cursor = conn.cursor()
     cursor.execute(sql, task)
-    return cursor.lastrowid
+    return cursor.fetchall()
 
 
 # from https://www.sqlitetutorial.net/sqlite-python/insert/
@@ -67,7 +74,25 @@ def create_task_insert_locations_db(conn, task):
     return cursor.lastrowid
 
 
-def insert_locations_into_jobs_locations_db(job_location, lat, lon):
+def create_task_filter(conn, task):
+    """
+        Create a new task
+        :param conn:
+        :param task:
+        :return:
+        """
+    sql = ''' SELECT * 
+                FROM jobs 
+                INNER JOIN job_locations ON jobs.location = job_locations.location
+                WHERE ? = ? '''
+    cursor = conn.cursor()
+    cursor.execute(sql, task)
+    result = cursor.fetchall
+    print(result)
+    return result
+
+
+def insert_locations_into_job_locations_db(job_location, lat, lon):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     task_1 = (job_location, lat, lon)
     create_task_insert_locations_db(conn, task_1)
@@ -78,10 +103,28 @@ def insert_github_jobs_into_jobs_db(github_jobs_list):
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
     for item in github_jobs_list:  # cycle though the list
         # place = GeoText(item['location'])
-        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'], item['type'])
+        task_1 = (item['id'], item['company_url'], item['company'], item['location'], item['title'], item['type'],
+                  item['description'], item['created_at'])
         create_task(conn, task_1)
     close_db(conn)  # close database when all done.
     print("Github jobs available:           " + str(len(github_jobs_list)))
+
+
+def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    for post in stack_overflow_jobs_data:  # cycle though the list
+        places = GeoText(post.title)
+        location = get_geotext_location(places)
+        if post.title.find("full-time") <= 9:
+            job_type = "Full-time"
+        elif post.title.find("full time") <= 1:
+            job_type = "Full-time"
+        else:
+            job_type = "part-time"
+        task_1 = (post.guid, post.link, post.author, location, post.title, job_type, post.description, post.published)
+        create_task(conn, task_1)
+    close_db(conn)  # close database when all done.
+    print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
 
 
 def get_geotext_location(places):
@@ -110,49 +153,19 @@ def get_geotext_location(places):
     return location
 
 
-def insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data):
-    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
-    for post in stack_overflow_jobs_data:  # cycle though the list
-        places = GeoText(post.title)
-        location = get_geotext_location(places)
-        if post.title.find("full-time") <= 9:
-            job_type = "Full-time"
-        elif post.title.find("full time") <= 1:
-            job_type = "Full-time"
-        else:
-            job_type = "part-time"
-        task_1 = (post.guid, post.link, post.author, location, post.title, job_type)
-        create_task(conn, task_1)
-    close_db(conn)  # close database when all done.
-    print("Stack Overflow jobs available:   " + str(len(stack_overflow_jobs_data)))
-
-
 # https://www.sqlitetutorial.net/sqlite-python/sqlite-python-select/
-def select_all_jobs(conn, table):
+def select_all_rows(table):
     """
     Query all rows in the tasks table
     :param table:
-    :param conn: the Connection object
     :return:
     """
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM {}".format(table))
+    conn, cursor = open_db("JobsDB.sqlite")
+    cursor.execute("SELECT * FROM {}".format(table))
 
-    rows = cur.fetchall()
-    return rows
-
-
-def fill_tables():
-    github_jobs_list = GithubJobsAPI.github_jobs_search()  # store github job data into the list.
-    stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()  # store stack overflow jobs
-    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
-    setup_db(cursor)
-
-    # methods to do the inserting into db.
-    insert_github_jobs_into_jobs_db(github_jobs_list)
-    insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
-    select_all_jobs(conn, "jobs")
+    rows = cursor.fetchall()
     close_db(conn)
+    return rows
 
 
 def show_select_with_join_lat_lon(conn):
@@ -172,6 +185,68 @@ def show_select_with_join_lat_lon(conn):
     return result
 
 
+def show_technology_from_job_table(conn, search_term):
+    """
+       Query all rows in the tasks table
+       :param search_term:
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    # task = ("description", search_term)
+    # result = create_task_filter(conn, task)
+    cursor.execute(" SELECT * FROM jobs WHERE description LIKE '%{}%'".format(search_term))
+    result = cursor.fetchall()
+    # result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
+
+
+def show_company_from_job_table(conn, search_term):
+    """
+       Query all rows in the tasks table
+       :param search_term:
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    cursor.execute(" SELECT * FROM jobs WHERE company LIKE '%{}%'".format(search_term))
+    result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
+
+
+def show_title_from_job_table(conn, search_term):
+    """
+       Query all rows in the tasks table
+       :param search_term:
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    cursor.execute(" SELECT * FROM jobs WHERE title LIKE '%{}%'".format(search_term))
+    result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
+
+
+def show_created_at_from_job_table(conn):
+    """
+       Query all rows in the tasks table
+       :param conn: the Connection object
+       :return:
+       """
+    cursor = conn.cursor()
+    cursor.execute(" SELECT * FROM jobs WHERE created_at ")
+    result = cursor.fetchall()
+    # for row in result:
+    # print(f' jobs.location: {row[0]}. lat: {row[1]}. lon: {row[2]}. company: {row[3]}. title: {row[4]}.')
+    return result
+
+
 # This code constructs a query for the given table, column, and value and
 # returns True if there is at least one row with the required value, otherwise it returns False.
 # https://stackoverflow.com/questions/39282991/python-checking-sql-database-column-for-value
@@ -180,8 +255,7 @@ def has_value(cursor, table, column, value):
     return cursor.execute(query, (value,)).fetchone() is not None
 
 
-"""
-def main():
+def fill_jobs_table():
     github_jobs_list = GithubJobsAPI.github_jobs_search()  # store github job data into the list.
     stack_overflow_jobs_data = StackOverflowJobsRSS.stack_overflow_jobs_search()  # store stack overflow jobs
     conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
@@ -190,10 +264,14 @@ def main():
     # methods to do the inserting into db.
     insert_github_jobs_into_jobs_db(github_jobs_list)
     insert_stack_overflow_jobs_into_jobs_db(stack_overflow_jobs_data)
-    select_all_jobs(conn, "jobs")
+    select_all_rows("jobs")
     close_db(conn)
+
+
+def main():
+    conn, cursor = open_db("JobsDB.sqlite")  # Open the database to store information.
+    setup_db(cursor)
 
 
 if __name__ == '__main__':
     main()
-"""
