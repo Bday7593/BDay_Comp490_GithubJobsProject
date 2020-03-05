@@ -55,7 +55,7 @@ def filter_by_age_of_post(day_month_year):
         try:
             item_date = datetime.strptime(item[7], '%a, %d %b %Y %H:%M:%S Z')
             # print("item_date: {}".format(str(item_date)))
-        except ValueError:
+        except TypeError:
             item_date = datetime.strptime(item[7], '%a %b %d %H:%M:%S UTC %Y')
             # print("item_date: {}".format(str(item_date)))
         try:
