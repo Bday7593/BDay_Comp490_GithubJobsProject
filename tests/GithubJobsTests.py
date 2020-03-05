@@ -10,7 +10,7 @@ def get_data():
     return JobsDB.select_all_rows("jobs")
 
 
-def test_jobs_dict(get_data):
+def test_jobs_list(get_data):
     # first required test
     assert len(get_data) >= 100
     assert type(get_data[1]) is list
