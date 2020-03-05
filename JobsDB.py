@@ -119,8 +119,8 @@ def create_task_filter(conn, task):
         :param task:
         :return:
         """
-    sql = ''' SELECT * 
-                FROM jobs 
+    sql = ''' SELECT *
+                FROM jobs
                 INNER JOIN job_locations ON jobs.location = job_locations.location
                 WHERE ? = ? '''
     cursor = conn.cursor()
