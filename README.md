@@ -40,7 +40,7 @@ def main():
     map_jobs(df)
     JobsDB.close_db(conn)
 The functions will cache the locations coordinates in a table and then use that table to create the map.
-        
+I made automated tests to test the use of the filters.
      
     
         
