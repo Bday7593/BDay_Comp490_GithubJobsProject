@@ -81,3 +81,14 @@ def filter_by_title(title_string):
     title_df = JobsMap.create_dataframe(title_combined_table)
     JobsDB.close_db(conn)
     return title_df
+
+
+def no_filter():
+    conn, cursor = JobsDB.open_db("JobsDB.sqlite")
+    location_list = JobsDB.select_all_rows("jobs")
+    JobsMap.cache_coordinates_in_db(conn, location_list)
+    combined_table = JobsDB.show_select_with_join_lat_lon(conn)
+    print("COMBINED_TABLE:")
+    df = JobsMap.create_dataframe(combined_table)
+    JobsDB.close_db(conn)
+    return df

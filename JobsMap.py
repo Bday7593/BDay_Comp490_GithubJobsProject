@@ -73,12 +73,12 @@ def map_jobs(df):
 
 def main():
     conn, cursor = JobsDB.open_db("JobsDB.sqlite")
-
     Filters.reset_job_locations()
+    JobsDB.setup_db(cursor)
+    df = Filters.no_filter()
     # df = Filters.filter_by_technology("swift")
     # df = Filters.filter_by_company("Apple")
-
-    df = Filters.filter_by_age_of_post("25/02/2020")
+    # df = Filters.filter_by_age_of_post("25/02/2020")
     # df = Filters.filter_by_title("Senior")
     map_jobs(df)
     JobsDB.close_db(conn)

@@ -22,3 +22,27 @@ SPRINT 2, 3:
         - If there are no files in the database the program MUST be run before being
             pushed to git. The database needs to populate with the jobs from github API
             to be test properly. 
+            
+SPRINT 4:
+    I could not get a GUI to work so there is not one. I wanted a project that would actually map locations
+    instead of a project with a broken GUI. As for mapping the jobs out; all the necessary functions are
+    in the class JobsMap.py in the main(). All that needs to be done is to comment and uncomment out the 
+    functions marked with %% to test them.  
+def main():
+    conn, cursor = JobsDB.open_db("JobsDB.sqlite")
+    Filters.reset_job_locations()
+    JobsDB.setup_db(cursor)
+%%   df = Filters.no_filter()
+%%   # df = Filters.filter_by_technology("swift")
+%%   # df = Filters.filter_by_company("Apple")
+%%   # df = Filters.filter_by_age_of_post("25/02/2020")
+%%   # df = Filters.filter_by_title("Senior") 
+    map_jobs(df)
+    JobsDB.close_db(conn)
+The functions will cache the locations coordinates in a table and then use that table to create the map.
+        
+     
+    
+        
+        
+    
